@@ -21,6 +21,13 @@ print(title)
 print(link)
 
 #반복구문
+print("===============반복구문===============")
+#파일로 저장
+f = open("c:\\work3\\webtoon.txt", "wt",encoding="utf-8")
+
 for item in cartoons:
     title = item.find("a").text
-    print(title)
+    print(title.strip())
+    f.write(title.strip() + "\n")
+
+f.close
