@@ -12,3 +12,15 @@ soup = BeautifulSoup(data, "html.parser")
 # <td class="title">
 	# <a href="/webtoon/detail.nhn">마음의 소리 49화 <지혜></a>
 # </td>
+#리스트 객체를 리턴(갯수 10개)
+cartoons = soup.find_all("td", class_="title")
+#첫번째만 슬라이싱
+title = cartoons[0].find("a").text
+link = cartoons[0].find("a")["href"]
+print(title)
+print(link)
+
+#반복구문
+for item in cartoons:
+    title = item.find("a").text
+    print(title)
