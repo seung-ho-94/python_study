@@ -1,0 +1,139 @@
+*답안지를 제출할 때 “수강생이름_3회차.py"로 제출하면 됩니다. 
+메일은 papasmf1@gmail.com 입니다. 
+
+[문제]
+
+1. 파이썬의 open()함수를 사용해서 c:\work2폴더에 아니면 
+작업하는 같은 폴더에 수강생이름.txt라는 텍스트 파일을 생성해서 
+쓰기를 하는 코드를 작성해야 합니다. 
+첫줄에 “파이썬 데이터”를 출력하고 두 번째 라인에 “abcd"를 출력하도록 합니다. 
+작업한 해당 파일을 닫고 파일에 첨부하는 모드로 
+다시 오픈해서 세 번째 줄에 “추가 데이터”를 쓰기를 하는 코드를 제출하세요. 
+
+=>
+f = open("c:\\3test\\임승호.txt","wt")
+f.write("파이썬 데이터\nabcd\n")
+
+f.close()
+
+f = open("c:\\3test\\임승호.txt", "rt")
+print(f.read())
+
+print("=" * 10)
+f = open("c:\\3test\\임승호.txt", "a+")
+f.write("추가 데이터\n")
+f.close()
+
+f = open("c:\\3test\\임승호.txt")
+print(f.read())
+f.close()
+
+
+2. 파이썬에서 BeautifulSoup을 사용해서 아래의 
+네이버 웹툰에서 첫페이지의 제목(10개의 데이터이며 2번째 컬럼)을 웹크롤링하는 
+코드를 제출하세요. 
+크롤링한 결과를 open()함수를 사용해서 webtoon.txt 라는 이름의 파일에 출력하면 됩니다. 
+https://comic.naver.com/webtoon/list.nhn?titleId=711422&weekday=fri
+
+=>
+import urllib.request
+from bs4 import BeautifulSoup
+data = urllib.request.urlopen('https://comic.naver.com/webtoon/list.nhn?titleId=711422&weekday=fri')
+soup = BeautifulSoup(data, "html.parser")
+
+cartoons = soup.find_all("td", class_="title")
+title = cartoons[0].find("a").text
+link = cartoons[0].find("a")["href"]
+print(title)
+print(link)
+
+f = open("c:\\work2\\webtoon.txt","wt",encoding="utf-8")
+for item in cartoons:
+    title = item.find("a").text
+    print(title.strip())
+    f.write(title.strip()+"\n")
+f.close()
+
+
+3. 위의 코드를 파이썬의 GUI라이브러리인 PyQt를 사용해서 
+화면을 만들고 버튼을 클릭하면 웹 크롤링 코드가 동작하도록 작성해서 제출하세요. 기본 화면(QMainWindow 클래스 상속)에 버튼이 하나 있으면 됩니다. 수강생이름Form.ui와 수강생이름Form.py로 작성해서 제출하면 됩니다. 
+
+=>
+import sys 
+from PyQt5.QtWidgets import * 
+from PyQt5 import uic 
+import urllib.request
+from bs4 import BeautifulSoup
+
+
+form_class = uic.loadUiType("임승호Form3.ui")[0]
+
+class DemoForm(QMainWindow, form_class):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+    def firstClick(self):
+        data = urllib.request.urlopen('http://comic.naver.com/webtoon/list.nhn?titleId=20853&weekday=fri')
+        soup = BeautifulSoup(data, "html.parser")
+        cartoons = soup.find_all("td", class_="title")
+        f = open("c:\\work2\\webtoon.txt", "wt", encoding="utf-8")
+        for item in cartoons:
+            title = item.find("a").text 
+            print(title.strip())
+            f.write(title.strip() + "\n")
+        f.close() 
+        self.label.setText("웹툰 크롤링 종료~~")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv) 
+    demoWindow = DemoForm()
+    demoWindow.show()
+    app.exec_() 
+
+[문제]
+
+4. SQLite DBBrowser를 사용해서 내가 가지고 있는 책을 
+수강생이름.db라는 파일이름으로 데이터베이스로 저장하려고 합니다. Books라는 테이블을 만들고 여기에 id int, title text로 컬럼을 추가합니다. id컬럼은 기본키 속성과 자동증가 속성을 가지고 있습니다. 여기에 “자바 코딩”, “파이썬 코딩”이라는 2건의 데이터(레코드)를 입력해서 검색 결과를 화면(콘솔)에 출력하는 코드를 제출하세요. 
+
+=>
+import sqlite3
+
+con = sqlite3.connect("c:\\3test\\임승호.db")
+cur = con.cursor()
+cur.execute("select * from books;")
+for row in cur:
+    print(row)
+
+5. 위의 데이터베이스를 안전하게 백업을 받으려고 합니다. 
+SQLite에서 제공되는 덤프(Dump)기능의 메서드를 사용해서 백업되는 SQL스크립트를 생성해서 제출하세요. 
+
+=>
+import sqlite3
+con = sqlite3.connect(":memory:")
+cur = con.cursor()
+cur.execute("create table books (Id text, title text);")
+cur.execute("insert into books values ('derick', '010-111');")
+name = "gildong"
+phoneNumber = "010-222"
+cur.execute("insert into books values (?, ?);", (name, phoneNumber))
+datalist = (("tom","010-123"), ("dsp","010-567"))
+cur.executemany("insert into books values (?, ?);", datalist)
+
+cur.execute("select * from books;")
+for row in cur:
+    print(row)
+
+f = open("c:\\3test\\임승호.sql","wt")
+for item in con.iterdump():
+    print(item)
+    f.write(item + "\n")
+
+f.close()
+
+with open("c:\\3test\\임승호.sql") as f:
+    SQLScript = f.read()
+
+con = sqlite3.connect("c:\\3test\\임승호.db")
+cur = con.cursor()
+cur.executescript(SQLScript)
+con.close()
